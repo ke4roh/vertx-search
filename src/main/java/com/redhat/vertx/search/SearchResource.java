@@ -6,7 +6,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.concurrent.CompletionStage;
+
+import io.reactivex.Single;
+import io.vertx.core.json.JsonObject;
 
 /**
  * This is a file-based web server with a twist: Files are pipelines which will execute on POSTed documents.
@@ -25,8 +27,15 @@ public class SearchResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{pipeline}")
-    public CompletionStage<String> get_pipeline(@PathParam("pipeline")String pipeline) {
-        return service.get(pipeline);
+    @Path("/pipeline/{name}")
+    public Single<JsonObject> get_pipeline(@PathParam("name")String name) {
+        return Single.create(emitter -> {
+            service.get("/tmp/" + name).subscribe(
+                    s -> emitter.onSuccess(new JsonObject().put("file", name).put("contents", s)),
+                    err ->
+//                            emitter.tryOnError(err)
+                        emitter.onSuccess(new JsonObject().put("file", name).put("error", err.getMessage()))
+            );
+        });
     }
 }
