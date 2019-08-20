@@ -7,21 +7,24 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.redhat.vertx.Engine;
 import com.redhat.vertx.pool.EnginePool;
 import io.reactivex.Single;
+import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 
 @ApplicationScoped
 public class PipelineManagerService {
     Map<String,String> filesystem = new HashMap<>();
-    EnginePool enginePool;
+
+    private EnginePool enginePool;
 
     @Inject
     Vertx vertx;
 
     @PostConstruct
     public void init() {
-//        enginePool = new EnginePool(); // TODO need to figure out the best approach for using the engine
+        getEnginePool();
     }
 
     public Single<String> get(String name) {
@@ -37,8 +40,21 @@ public class PipelineManagerService {
         return null;
     }
 
+
     public Single<String> run(String pipeline, String doc) {
-        return null;
+        return Single.create(ran -> {
+            Single<Engine> engineSingle = getEnginePool().getEngineByPipelineName(pipeline);
+            engineSingle.subscribe(engine -> {
+                engine.execute(new JsonObject(doc)).subscribe(d -> ran.onSuccess(d.toString()));
+            });
+        });
+    }
+
+    private EnginePool getEnginePool() {
+        if (enginePool == null) {
+            enginePool = new EnginePool(this::get,vertx);
+        }
+        return enginePool;
     }
 
 }

@@ -1,0 +1,10 @@
+[
+    {
+        "name":"Yo!",
+        "class":"com.redhat.vertx.pipeline.steps.Copy",
+        "vars": {
+           "from":"Hello, {{doc.name}}"
+        },
+        "register":"greetings"
+    }
+]
