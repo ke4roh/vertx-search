@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import com.redhat.vertx.Engine;
 import com.redhat.vertx.pool.EnginePool;
 import io.reactivex.Single;
-import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 
