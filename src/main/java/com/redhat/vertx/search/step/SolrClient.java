@@ -1,5 +1,13 @@
 package com.redhat.vertx.search.step;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.redhat.vertx.Engine;
 import com.redhat.vertx.pipeline.AbstractStep;
 import com.redhat.vertx.pipeline.StepDependencyNotMetException;
@@ -11,14 +19,6 @@ import io.vertx.reactivex.ext.web.codec.BodyCodec;
 import org.apache.http.client.utils.URIBuilder;
 import org.jsoup.HttpStatusException;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class SolrClient extends AbstractStep {
     private static final Set<String> PARAMS = new HashSet<>(Arrays.asList((
             "sow,mm.autoRelax,boost,lowercaseOperators,ps,pf2,ps2,pf3,ps3,stopwords,uf,qf," +
@@ -29,11 +29,14 @@ public class SolrClient extends AbstractStep {
     @Override
     public void init(Engine engine, JsonObject config) {
         super.init(engine, config);
-        http = WebClient.create(engine.getVertRx());
     }
 
     @Override
     protected Maybe<Object> executeSlow(JsonObject env) {
+        if (http == null) {
+            http = WebClient.create(engine.getVertRx());
+        }
+
         String host_url = env.getString("host_url");
         String path = env.getString("path");
         String q = env.getString("q");

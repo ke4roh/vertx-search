@@ -1,0 +1,2 @@
+com.redhat.vertx.search.step.AbstractSearchStep
+com.redhat.vertx.search.step.SolrClient
