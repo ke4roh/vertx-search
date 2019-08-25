@@ -18,7 +18,6 @@ import java.util.Map;
 public class PipelineManagerService {
     private EnginePool enginePool;
 
-
     @Inject
     Config config;
 

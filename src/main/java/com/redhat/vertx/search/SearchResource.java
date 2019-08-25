@@ -11,7 +11,6 @@ import io.vertx.core.json.JsonObject;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import java.nio.Buffer;
 import java.nio.file.Paths;
 
 /**
