@@ -26,12 +26,39 @@ public class SolrClient extends AbstractStep {
     private static final Set<String> PARAMS = new HashSet<>(Arrays.asList((
             "sow,mm.autoRelax,boost,lowercaseOperators,ps,pf2,ps2,pf3,ps3,stopwords,uf,qf," +
                     "defType,sort,start,rows,fq,fl,debug,explainOther,timeAllowed,segmentTerminateEarly," +
-                    "omitHeader,wt,cache,logParamsList,echoParams,q").split("\\,")));
+                    "omitHeader,cache,logParamsList,echoParams,q").split("\\,")));
+    // wt is not in the above list because it is not specifiable by consumers of this client instance
     private WebClient http;
 
     @Override
     public void init(Engine engine, JsonObject config) {
         super.init(engine, config);
+    }
+
+    protected URL generateUrl(JsonObject env) throws StepDependencyNotMetException, URISyntaxException, MalformedURLException {
+        String host_url = env.getString("host_url");
+        String path = env.getString("path");
+        String q = env.getString("q");
+
+        if (host_url == null || path == null || q == null || host_url.length()<1 || path.length() <1 || q.length() <1 ) {
+            throw new StepDependencyNotMetException();
+        }
+
+        URIBuilder b = null;
+        b = new URIBuilder(host_url);
+        b.setPath(path);
+        for (String param: PARAMS.stream().filter(env::containsKey).collect(Collectors.toSet())) {
+            Object p = env.getValue(param);
+            if (p instanceof JsonArray) {
+                for (Object pp : ((JsonArray)p)) {
+                    b.addParameter(param,(String)pp);
+                }
+            } else {
+                b.addParameter(param,(String)p);
+            }
+        }
+        b.setParameter("wt","json");
+        return b.build().toURL();
     }
 
     @Override
@@ -40,33 +67,10 @@ public class SolrClient extends AbstractStep {
             http = WebClient.create(engine.getRxVertx());
         }
 
-        String host_url = env.getString("host_url");
-        String path = env.getString("path");
-        String q = env.getString("q");
-
-        if (host_url == null || path == null || q == null || host_url.length()<1 || path.length() <1 || q.length() <1 ) {
-            return Maybe.error(new StepDependencyNotMetException());
-        }
-
-        URIBuilder b = null;
-        final URL url;
+        URL url;
         try {
-            b = new URIBuilder(host_url);
-            b.setPath(path);
-            for (String param: PARAMS.stream().filter(env::containsKey).collect(Collectors.toSet())) {
-                Object p = env.getValue(param);
-                if (p instanceof JsonArray) {
-                    for (Object pp : ((JsonArray)p)) {
-                        b.addParameter(param,(String)pp);
-                    }
-                } else {
-                    b.addParameter(param,(String)p);
-                }
-            }
-            b.setParameter("wt","json");
-            b.setParameter("indent","on");
-            url = b.build().toURL();
-        } catch (URISyntaxException | MalformedURLException e) {
+            url = generateUrl(env);
+        } catch (StepDependencyNotMetException | URISyntaxException | MalformedURLException e) {
             return Maybe.error(e);
         }
 
@@ -75,7 +79,6 @@ public class SolrClient extends AbstractStep {
         return Maybe.create( step ->
                 addDisposable(env.getJsonObject("doc").getString(Engine.DOC_UUID),
                         http.getAbs(url.toString())
-                                .putHeader("Content-type","application/json")
                                 .as(BodyCodec.jsonObject())
                                 .rxSend()
                                 .subscribe(response -> {
@@ -87,9 +90,8 @@ public class SolrClient extends AbstractStep {
                                             }
 
                                         },
-                                        err -> {
-                                            step.onError(err);
-                                        })
+                                        step::onError
+                                )
                 )
         );
     }
