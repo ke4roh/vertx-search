@@ -8,7 +8,7 @@ import java.util.*;
  * Wrap the {@link Config} in a {@link Map} so that it can be made available in constant time
  * to prospective consumers of some of the contents.
  */
-public class ConfigMap extends AbstractMap<String,Object> {
+public class ConfigMap extends AbstractMap<String,String> {
     private final Config config;
 
     public ConfigMap(Config config) {
@@ -16,8 +16,8 @@ public class ConfigMap extends AbstractMap<String,Object> {
     }
 
     @Override
-    public Set<Entry<String, Object>> entrySet() {
-        Set<Entry<String, Object>> set = new HashSet<>();
+    public Set<Entry<String, String>> entrySet() {
+        Set<Entry<String, String>> set = new HashSet<>();
         for (String prop : config.getPropertyNames()) {
             set.add(Map.entry(prop,get(prop)));
         }
@@ -25,11 +25,11 @@ public class ConfigMap extends AbstractMap<String,Object> {
     }
 
     @Override
-    public Object get(Object key) {
+    public String get(Object key) {
         if (! (key instanceof String)) {
             return null;
         }
-        return config.getValue((String)key, Object.class);
+        return config.getValue((String)key, String.class);
     }
 
     @Override

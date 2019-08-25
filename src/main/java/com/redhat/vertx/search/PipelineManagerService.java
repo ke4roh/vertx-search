@@ -12,6 +12,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.Vertx;
 import org.eclipse.microprofile.config.Config;
 
+import java.util.Map;
+
 @ApplicationScoped
 public class PipelineManagerService {
     private EnginePool enginePool;
@@ -52,9 +54,10 @@ public class PipelineManagerService {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private EnginePool getEnginePool() {
         if (enginePool == null) {
-            enginePool = new EnginePool(this::get,vertx, new ConfigMap(config));
+            enginePool = new EnginePool(this::get,vertx, (Map)new ConfigMap(config));
         }
         return enginePool;
     }
