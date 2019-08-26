@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.redhat.vertx.Engine;
 import com.redhat.vertx.pipeline.AbstractStep;
@@ -44,10 +43,9 @@ public class SolrClient extends AbstractStep {
             throw new StepDependencyNotMetException();
         }
 
-        URIBuilder b = null;
-        b = new URIBuilder(host_url);
+        URIBuilder b = new URIBuilder(host_url);
         b.setPath(path);
-        for (String param: PARAMS.stream().filter(env::containsKey).collect(Collectors.toSet())) {
+        PARAMS.stream().filter(env::containsKey).forEach(param -> {
             Object p = env.getValue(param);
             if (p instanceof JsonArray) {
                 for (Object pp : ((JsonArray)p)) {
@@ -56,7 +54,7 @@ public class SolrClient extends AbstractStep {
             } else {
                 b.addParameter(param,(String)p);
             }
-        }
+        });
         b.setParameter("wt","json");
         return b.build().toURL();
     }

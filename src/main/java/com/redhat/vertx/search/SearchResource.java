@@ -5,10 +5,8 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import io.netty.buffer.ByteBuf;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
-import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.nio.file.Paths;
