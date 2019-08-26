@@ -2,6 +2,7 @@ package com.redhat.vertx.search;
 
 import org.eclipse.microprofile.config.Config;
 
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -16,25 +17,35 @@ public class ConfigMap extends AbstractMap<String,String> {
     }
 
     @Override
-    public Set<Entry<String, String>> entrySet() {
+    public @NotNull Set<Entry<String, String>> entrySet() {
         Set<Entry<String, String>> set = new HashSet<>();
-        for (String prop : config.getPropertyNames()) {
-            set.add(Map.entry(prop,get(prop)));
-        }
+        config.getPropertyNames().forEach(prop ->
+            set.add(Map.entry(prop,get(prop)))
+        );
         return Collections.unmodifiableSet(set);
     }
 
     @Override
     public String get(Object key) {
-        if (! (key instanceof String)) {
+        try {
+            return get0((String)key);
+        } catch (ClassCastException | NoSuchElementException e) {
             return null;
         }
-        return config.getValue((String)key, String.class);
+    }
+
+    private String get0(String key) throws NoSuchElementException {
+        return config.getValue(key, String.class);
     }
 
     @Override
     public boolean containsKey(Object key) {
-        return (key instanceof String) && (config.getValue((String)key,Object.class)!=null);
+        try {
+            get0((String)key);
+            return true;
+        } catch (ClassCastException | NoSuchElementException e) {
+            return false;
+        }
     }
 
 }
