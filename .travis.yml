@@ -1,0 +1,14 @@
+language: java
+jdk:
+  - openjdk11
+cache:
+  directories:
+    - $HOME/.m2
+before_install:
+  - git clone --depth=1 https://github.com/ke4roh/vertx-engine.git
+  - cd vertx-engine
+  - mvn clean install
+  - cd ..
+  - ./mvnw install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+# after_success:
+#  - ./mvnw jacoco:report coveralls:report -P travis
