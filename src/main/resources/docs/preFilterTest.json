@@ -3,17 +3,18 @@
     "name":"preFilterQuery",
     "class":"com.redhat.vertx.pipeline.steps.Copy",
     "vars": {
-      "from":"{{ doc.q | replace_synonyms(synonyms) }}",
-      "foo": "| regex_replace(\"([rhel]|[rhev])[ \\\\-_]*([0-9]+(?:\\\\.[0-9]+){0,2})\",\"$1$2\") }}",
+      "from":"{{ doc.q | replace_synonyms(synonyms) | regex_replace(\"(rhel|rhev)[ \\\\-_]*([0-9])+(?:\\\\.([0-9]+)(?:\\\\.([0-9]+))?)?\",\"$1$2$3$4\") | regex_replace(\"\\\\s\\\\s+\",\" \") | regex_replace(\":(?=\\\\w)\",\": \") }}",
       "synonyms": {
          "Red Hat Enterprise Linux":"rhel",
          "Red Hat Enterprise Virtualization":"rhev",
          "RHEL":"rhel",
          "RHEV":"rhev",
          "wi-fi":"wifi",
-         "can not":"can\\'t",
-         "will not":"won\\'t",
-         "is not":"isn\\'t",
+         "can not":"can't",
+         "will not":"won't",
+         "is not":"isn't",
+         "[":" [ ",
+         "]":" ] ",
          "subscription manager":"subscription-manager"
       }
     },

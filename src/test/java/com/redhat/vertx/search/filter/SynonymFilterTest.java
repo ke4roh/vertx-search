@@ -21,7 +21,7 @@ public class SynonymFilterTest {
     @Test
     public void testPreFilter() {
         String test = "+(product:\"Red Hat Enterprize Linux\") Washington spent the winter {here} with a RHel 7 system and all he needed was a good [wi-fi] connection -test:RHEL-7";
-        String expected = "+(product:\"Red Hat Enterprize Linux\") Washington spent the winter {here} with a  rhel7  system and all he needed was a good [ wifi ] connection -test: rhel7";
+        String expected = "+(product:\"Red Hat Enterprize Linux\") Washington spent the winter {here} with a rhel7 system and all he needed was a good [ wifi ] connection -test: rhel7";
 
         Response response = given()
                 .when().body(new JsonObject().put("q",test).toString())

@@ -24,8 +24,6 @@ public class SynonymFilter implements Filter {
             return qStr;
         }
 
-        StringBuilder sb = new StringBuilder();
-
         // TODO figure out a more robust way to receive a paramater indicating a map of synonyms
         /**
          * Jinja is resolving the name of the variable representing a map to its toString() value
@@ -35,12 +33,16 @@ public class SynonymFilter implements Filter {
         String params = args[0].substring(1,args[0].length()-1);
         for (String kvp: params.split(", ")) {
             String[] kv = kvp.split("=");
-            translations.put(kv[0],kv[1]);
+            translations.put(kv[0].toLowerCase(),kv[1]);
         }
 
-        Pattern p = Pattern.compile(String.join("|",translations.keySet()), Pattern.CASE_INSENSITIVE);
+        StringBuilder patternBuilder = new StringBuilder();
+        translations.keySet().stream().map(Pattern::quote)
+                .forEach(s-> { patternBuilder.append(s); patternBuilder.append('|'); } );
+        patternBuilder.deleteCharAt(patternBuilder.length()-1);
+        Pattern p = Pattern.compile(patternBuilder.toString(), Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher((String) qStr);
-        String s = m.replaceAll(match-> translations.get(match.group()));
+        String s = m.replaceAll(match-> translations.get(match.group().toLowerCase()));
         return s;
     }
 
