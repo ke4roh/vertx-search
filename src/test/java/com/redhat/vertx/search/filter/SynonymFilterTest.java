@@ -36,7 +36,6 @@ public class SynonymFilterTest {
 
     @Test
     public void testSynonymReplacement() {
-        Filter f = new SynonymFilter();
         JinjavaConfig.Builder builder = JinjavaConfig.newBuilder();
         builder.withFailOnUnknownTokens(true);
         JinjavaConfig config = builder.build();
