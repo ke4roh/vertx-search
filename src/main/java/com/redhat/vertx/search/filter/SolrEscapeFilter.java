@@ -1,4 +1,4 @@
-package com.redhat.vertx.search.template;
+package com.redhat.vertx.search.filter;
 
 import java.util.Objects;
 
