@@ -26,7 +26,7 @@ public class SynonymFilterTest {
         Response response = given()
                 .when().body(new JsonObject().put("q",test).toString())
                 .header("Content-type","application/json")
-                .post("/preFilterTest.json")
+                .post("/preFilterTest.yaml")
                 .then()
                 .statusCode(200).contentType(ContentType.JSON).extract().response();
         Map<String,String> map = response.jsonPath().get();
