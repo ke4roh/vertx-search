@@ -29,11 +29,6 @@ public class SolrClient extends AbstractStep {
     // wt is not in the above list because it is not specifiable by consumers of this client instance
     private WebClient http;
 
-    @Override
-    public void init(Engine engine, JsonObject config) {
-        super.init(engine, config);
-    }
-
     protected URL generateUrl(JsonObject env) throws StepDependencyNotMetException, URISyntaxException, MalformedURLException {
         String host_url = env.getString("host_url");
         String path = env.getString("path");
