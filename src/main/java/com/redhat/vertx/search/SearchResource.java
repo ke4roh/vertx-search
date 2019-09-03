@@ -26,7 +26,7 @@ public class SearchResource {
     @Inject
     PipelineManagerService service;
 
-    @ConfigProperty(name = "doc.root", defaultValue = "./docs")
+    @ConfigProperty(name = "doc_root", defaultValue = "./docs")
     String root;
 
     @GET
