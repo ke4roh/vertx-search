@@ -25,7 +25,8 @@ public class SolrClient extends AbstractStep {
     private static final Set<String> PARAMS = new HashSet<>(Arrays.asList((
             "sow,mm.autoRelax,boost,lowercaseOperators,ps,pf2,ps2,pf3,ps3,stopwords,uf,qf," +
                     "defType,sort,start,rows,fq,fl,debug,explainOther,timeAllowed,segmentTerminateEarly," +
-                    "omitHeader,cache,logParamsList,echoParams,q").split("\\,")));
+                    "omitHeader,cache,logParamsList,echoParams,q,q.op").split("\\,")));
+    // TODO are there other parameters for edismax et al that need to be considered? How to make exhaustive list?
     // wt is not in the above list because it is not specifiable by consumers of this client instance
     private WebClient http;
 
