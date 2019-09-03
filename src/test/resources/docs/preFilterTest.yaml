@@ -5,8 +5,9 @@
       from: '{{
          doc.q
             | replace_synonyms(synonyms)
-            | regex_replace("(rhel|rhev)[ \\-_]*([0-9])+(?:\\.([0-9]+)(?:\\.([0-9]+))?)?","$1$2$3$4")
-            | regex_replace("\\s\\s+"," ") | regex_replace(":(?=\\w)",": ")
+            | regex_replace(smash_version_numbers_to_products)
+            | regex_replace(normalize_whitespace)
+            | regex_replace(insert_space_after_colon_unless_word_break_follows)
          }}'
       synonyms:
          Red Hat Enterprise Linux: rhel
@@ -20,4 +21,10 @@
          "[": " [ "
          "]": " ] "
          "subscription manager": subscription-manager
+      normalize_whitespace: [ "\\s\\s+", " " ]
+      insert_space_after_colon_unless_word_break_follows: [ ":(?=\\w)", ": " ]
+      smash_version_numbers_to_products:
+         - "(rhel|rhev)[ \\-_]*([0-9])+(?:\\.([0-9]+)(?:\\.([0-9]+))?)?"
+         - "$1$2$3$4"
+
   register: filtered
