@@ -23,9 +23,10 @@ import org.kohsuke.MetaInfServices;
 @MetaInfServices(Step.class)
 public class SolrClient extends AbstractStep {
     private static final Set<String> PARAMS = new HashSet<>(Arrays.asList((
-            "sow,mm.autoRelax,boost,lowercaseOperators,ps,pf2,ps2,pf3,ps3,stopwords,uf,qf," +
-                    "defType,sort,start,rows,fq,fl,debug,explainOther,timeAllowed,segmentTerminateEarly," +
-                    "omitHeader,cache,logParamsList,echoParams,q,q.op").split("\\,")));
+            "sow,mm.autoRelax,boost,lowercaseOperators,pf,pf2,pf3,ps,ps2,ps3,stopwords,uf,qf," +
+                    "df,defType,sort,start,rows,fq,fl,debug,explainOther,timeAllowed,segmentTerminateEarly," +
+                    "omitHeader,cache,logParamsList,echoParams,q,q.op,tie,mm,bq,hl.fragsize,req_type" +
+            "hl.fl,hl.snippets,enableElevation,hl.simple.post").split("\\,")));
     // TODO are there other parameters for edismax et al that need to be considered? How to make exhaustive list?
     // wt is not in the above list because it is not specifiable by consumers of this client instance
     private WebClient http;
@@ -45,10 +46,10 @@ public class SolrClient extends AbstractStep {
             Object p = env.getValue(param);
             if (p instanceof JsonArray) {
                 for (Object pp : ((JsonArray)p)) {
-                    b.addParameter(param,(String)pp);
+                    b.addParameter(param,String.valueOf(pp));
                 }
             } else {
-                b.addParameter(param,(String)p);
+                b.addParameter(param,String.valueOf(p));
             }
         });
         b.setParameter("wt","json");

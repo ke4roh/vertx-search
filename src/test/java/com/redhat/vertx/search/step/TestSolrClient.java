@@ -17,6 +17,8 @@ public class TestSolrClient {
     public void testGenerateUrl() throws Exception {
         SolrClient client = new SolrClient();
         JsonObject env = new JsonObject();
+        env.put("dehydration","false");
+        env.put("rows",3);
         env.put("q","Jason");
         env.put("host_url","http://localhost:8080/");
         env.put("path","/solr/access/select");
@@ -26,8 +28,10 @@ public class TestSolrClient {
 
         Map<String,String> params = new HashMap<>();
         URLEncodedUtils.parse(url.toURI(), Charset.forName("UTF-8")).iterator().forEachRemaining(nvp -> params.put(nvp.getName(),nvp.getValue()));
-        assertThat(params.size()).isEqualTo(2);
+        assertThat(params.size()).isEqualTo(3);
+        assertThat(params.get("rows")).isEqualTo("3");
         assertThat(params.get("wt")).isEqualTo("json");
         assertThat(params.get("q")).isEqualTo("Jason");
+        assertThat(params.containsKey("dehydration")).isFalse();
     }
 }
