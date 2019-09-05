@@ -14,10 +14,10 @@ import com.redhat.vertx.pipeline.StepDependencyNotMetException;
 import io.reactivex.Maybe;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.handler.impl.HttpStatusException;
 import io.vertx.reactivex.ext.web.client.WebClient;
 import io.vertx.reactivex.ext.web.codec.BodyCodec;
 import org.apache.http.client.utils.URIBuilder;
-import org.jsoup.HttpStatusException;
 import org.kohsuke.MetaInfServices;
 
 @MetaInfServices(Step.class)
@@ -80,8 +80,7 @@ public class SolrClient extends AbstractStep {
                                             if (response.statusCode() == 200) {
                                                 step.onSuccess(response.body());
                                             } else {
-                                                // TODO make a new exception - this is a weird dependency
-                                                step.onError(new HttpStatusException(response.bodyAsString(),response.statusCode(),url.toString()));
+                                                step.onError(new HttpStatusException(500, response.bodyAsString()));
                                             }
 
                                         },
