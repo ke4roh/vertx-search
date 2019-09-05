@@ -19,9 +19,13 @@ public class ConfigMap extends AbstractMap<String,String> {
     @Override
     public @NotNull Set<Entry<String, String>> entrySet() {
         Set<Entry<String, String>> set = new HashSet<>();
-        config.getPropertyNames().forEach(prop ->
-            set.add(Map.entry(prop,get(prop)))
-        );
+        config.getPropertyNames().forEach(prop -> {
+                    try {
+                        set.add(Map.entry(prop, get0(prop)));
+                    } catch (NoSuchElementException e) {
+                        // skip it.  Where'd it go?
+                    }
+                });
         return Collections.unmodifiableSet(set);
     }
 
@@ -47,5 +51,4 @@ public class ConfigMap extends AbstractMap<String,String> {
             return false;
         }
     }
-
 }
