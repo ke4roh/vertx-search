@@ -23,7 +23,8 @@ public class TestSolrClient {
         env.put("host_url","http://localhost:8080/");
         env.put("path","/solr/access/select");
 
-        URL url = client.generateUrl(env);
+        String urlStr = client.getUrl(env);
+        URL url = new URL(urlStr);
         assertThat(url.getHost()).isEqualTo("localhost");
 
         Map<String,String> params = new HashMap<>();

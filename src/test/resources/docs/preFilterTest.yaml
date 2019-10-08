@@ -1,7 +1,6 @@
 ---
 - name: preFilterQuery
-  class: com.redhat.vertx.pipeline.steps.Copy
-  vars:
+  copy:
       from: '{{
          doc.q
             | replace_synonyms(synonyms)
