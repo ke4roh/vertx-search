@@ -1,8 +1,7 @@
 [
   {
     "name":"SolrQuery",
-    "class":"com.redhat.vertx.search.step.SolrClient",
-    "vars":{
+    "solr_client":{
        "host_url":"{{system.solr_url}}",
       "path":"/solr/access/select",
        "q":"{{doc.q}}"
